@@ -1,0 +1,468 @@
+[
+    {
+        "id": "2f7fccb0365cc210",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "cd32f1cd7caeb800",
+        "type": "firebase.on",
+        "z": "2f7fccb0365cc210",
+        "name": "enviando dato a mqtt",
+        "firebaseconfig": "",
+        "childpath": "/closestReminders/reminderTime",
+        "atStart": false,
+        "eventType": "value",
+        "queries": [],
+        "x": 340,
+        "y": 180,
+        "wires": [
+            [
+                "68772f9656166480"
+            ]
+        ]
+    },
+    {
+        "id": "87702de7fd768b87",
+        "type": "mqtt out",
+        "z": "2f7fccb0365cc210",
+        "name": "topic: proyecto",
+        "topic": "proyecto",
+        "qos": "0",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "0570e46a53828167",
+        "x": 920,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "68772f9656166480",
+        "type": "function",
+        "z": "2f7fccb0365cc210",
+        "name": "Conversión de formato de fecha",
+        "func": "// Recuperar el timestamp desde msg.payload\nconst timestamp = msg.payload;\n\n// Crear un objeto Date con el timestamp\nconst date = new Date(timestamp);\n\n// Obtener las partes de la fecha\nconst day = String(date.getDate()).padStart(2, '0');\nconst month = String(date.getMonth() + 1).padStart(2, '0'); // Los meses van de 0 a 11\nconst year = date.getFullYear();\n\nconst hours = String(date.getHours()).padStart(2, '0');\nconst minutes = String(date.getMinutes()).padStart(2, '0');\n\n// Formatear la fecha como dd/MM/yyyy HH:mm\nconst formattedDate = `${day}/${month}/${year} ${hours}:${minutes}`;\n\n// Asignar la fecha formateada a msg.payload\nmsg.payload = formattedDate;\n\n// Devolver el mensaje modificado\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 630,
+        "y": 180,
+        "wires": [
+            [
+                "87702de7fd768b87",
+                "c0e4d55b6a987044"
+            ]
+        ]
+    },
+    {
+        "id": "c0e4d55b6a987044",
+        "type": "debug",
+        "z": "2f7fccb0365cc210",
+        "name": "debug 14",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 900,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "48f140d131444aab",
+        "type": "comment",
+        "z": "2f7fccb0365cc210",
+        "name": "Flujo para enviar la fecha de Firebase al Brazalete",
+        "info": "",
+        "x": 430,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "6fb7e7402e38091a",
+        "type": "mqtt in",
+        "z": "2f7fccb0365cc210",
+        "name": "",
+        "topic": "proyecto/emergency",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "0570e46a53828167",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 330,
+        "y": 460,
+        "wires": [
+            [
+                "948637ad535a8823"
+            ]
+        ]
+    },
+    {
+        "id": "948637ad535a8823",
+        "type": "firebase modify",
+        "z": "2f7fccb0365cc210",
+        "name": "envio dato",
+        "firebaseconfig": "",
+        "childpath": "/emergencyStatus/emergency",
+        "method": "set",
+        "value": "msg.payload",
+        "priority": "msg.priority",
+        "x": 570,
+        "y": 460,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c1a16615a0b7c98f",
+        "type": "comment",
+        "z": "2f7fccb0365cc210",
+        "name": "Flujo para enviar respuesta desde el Brazalete a Firebase (emegency)",
+        "info": "",
+        "x": 490,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "4c5f05f11754e191",
+        "type": "inject",
+        "z": "2f7fccb0365cc210",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "confirmed",
+        "payloadType": "str",
+        "x": 160,
+        "y": 600,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "d587fc77906457c1",
+        "type": "debug",
+        "z": "2f7fccb0365cc210",
+        "name": "debug 10",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 840,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "1595b6554f6e8d21",
+        "type": "firebase.on",
+        "z": "2f7fccb0365cc210",
+        "name": "on",
+        "firebaseconfig": "",
+        "childpath": "/pendingReminders",
+        "atStart": true,
+        "eventType": "msg.eventType",
+        "queries": [],
+        "x": 610,
+        "y": 960,
+        "wires": [
+            [
+                "3e534fef2dba05f0"
+            ]
+        ]
+    },
+    {
+        "id": "28d4a60a2133e415",
+        "type": "function",
+        "z": "2f7fccb0365cc210",
+        "name": "function 6",
+        "func": "if(msg.payload == \"confirmed\"){\n    msg.eventType = 'value';\n    return msg;\n} else {\n    return null;\n}\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 440,
+        "y": 960,
+        "wires": [
+            [
+                "1595b6554f6e8d21"
+            ]
+        ]
+    },
+    {
+        "id": "61754a545598603b",
+        "type": "join",
+        "z": "2f7fccb0365cc210",
+        "name": "",
+        "mode": "custom",
+        "build": "array",
+        "property": "",
+        "propertyType": "full",
+        "key": "unir",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "accumulate": false,
+        "timeout": "0",
+        "count": "2",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "num",
+        "reduceFixup": "",
+        "x": 590,
+        "y": 720,
+        "wires": [
+            [
+                "d84aaee69b6d287c"
+            ]
+        ]
+    },
+    {
+        "id": "3e534fef2dba05f0",
+        "type": "function",
+        "z": "2f7fccb0365cc210",
+        "name": "function",
+        "func": "var remindersObject = msg.payload;  // Recupera del contexto de flujo\n\n// Verifica que el payload sea un objeto\nif (typeof remindersObject !== 'object' || remindersObject === null) {\n    node.error(\"El payload no es un objeto válido\", msg);\n    return null;\n}\n// Convertir el objeto a un array\nvar reminders = Object.keys(remindersObject).map(key => {\n    return remindersObject[key];\n});\n\n// Encuentra el recordatorio con el menor reminderTime\nlet closestPendingReminder = reminders.reduce((nearest, reminder) => {\n    return (nearest.reminderTime < reminder.reminderTime) ? nearest : reminder;\n});\n\nvar reminderId = closestPendingReminder.id\n\nvar firebasePath = '/pendingReminders/' + reminderId + '/state'\n\nmsg.childpath = firebasePath;\nmsg.payload = reminderId;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 600,
+        "y": 840,
+        "wires": [
+            [
+                "61754a545598603b"
+            ]
+        ]
+    },
+    {
+        "id": "d84aaee69b6d287c",
+        "type": "function",
+        "z": "2f7fccb0365cc210",
+        "name": "function",
+        "func": "if(msg.payload[0].payload == \"confirmed\"){\n    var estado = msg.payload[0].payload; //confirmed\n    var reminderId = msg.payload[1].payload; // id\n} else{\n    var estado = msg.payload[1].payload; //confirmed\n    var reminderId = msg.payload[0].payload; // id\n}\nvar firebasePath = '/pendingReminders/' + reminderId + '/state'\nmsg.childpath = firebasePath;\nmsg.payload = estado;\nmsg.id = reminderId;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 740,
+        "y": 660,
+        "wires": [
+            [
+                "d587fc77906457c1",
+                "badff6413f7fba95"
+            ]
+        ]
+    },
+    {
+        "id": "89780131523be1fe",
+        "type": "firebase modify",
+        "z": "2f7fccb0365cc210",
+        "name": "envio dato",
+        "firebaseconfig": "",
+        "childpath": "msg.childpath",
+        "method": "set",
+        "value": "msg.payload",
+        "priority": "msg.priority",
+        "x": 1210,
+        "y": 700,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "badff6413f7fba95",
+        "type": "switch",
+        "z": "2f7fccb0365cc210",
+        "name": "verificar confirmacion",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "confirmed",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 880,
+        "y": 740,
+        "wires": [
+            [
+                "d1b1ee0bdd4af867",
+                "c776f3c9d3b95dae"
+            ]
+        ]
+    },
+    {
+        "id": "d1b1ee0bdd4af867",
+        "type": "debug",
+        "z": "2f7fccb0365cc210",
+        "name": "debug 15",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1080,
+        "y": 780,
+        "wires": []
+    },
+    {
+        "id": "c776f3c9d3b95dae",
+        "type": "switch",
+        "z": "2f7fccb0365cc210",
+        "name": "verificar id",
+        "property": "id",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "neq",
+                "v": "undefined",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 1070,
+        "y": 640,
+        "wires": [
+            [
+                "89780131523be1fe",
+                "597630771a81f941"
+            ]
+        ]
+    },
+    {
+        "id": "597630771a81f941",
+        "type": "debug",
+        "z": "2f7fccb0365cc210",
+        "name": "debug 16",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1200,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "22cba0d40afc787f",
+        "type": "comment",
+        "z": "2f7fccb0365cc210",
+        "name": "Flujo para actualizar el estado de recordatorios pendientes",
+        "info": "",
+        "x": 410,
+        "y": 660,
+        "wires": []
+    },
+    {
+        "id": "799cc750797f948d",
+        "type": "mqtt in",
+        "z": "2f7fccb0365cc210",
+        "name": "",
+        "topic": "proyecto/confirmed",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "0570e46a53828167",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 250,
+        "y": 720,
+        "wires": [
+            [
+                "613cab9150f93c8f",
+                "28d4a60a2133e415",
+                "61754a545598603b"
+            ]
+        ]
+    },
+    {
+        "id": "613cab9150f93c8f",
+        "type": "debug",
+        "z": "2f7fccb0365cc210",
+        "name": "debug 17",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 220,
+        "y": 860,
+        "wires": []
+    },
+    {
+        "id": "0570e46a53828167",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "161.132.48.12",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    }
+]
